@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#e4e0d4; -webkit-font-smoothing:antialiased; }
+  a { color:#37624a; text-decoration:none; }
+  a:hover { color:#274736; }
+  .tabscroll::-webkit-scrollbar { display:none; }
+  .tabscroll { scrollbar-width:none; }
+  .chatscroll::-webkit-scrollbar { display:none; }
+  .chatscroll { scrollbar-width:none; }
+  .tdot { width:7px;height:7px;border-radius:50%;background:#9db3a4;animation:tbounce 1s infinite ease-in-out; }
+  @keyframes tbounce { 0%,80%,100%{opacity:.3;transform:translateY(0)} 40%{opacity:1;transform:translateY(-3px)} }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .ci:focus { outline:none; }
+</style>
+</helmet>
+<section style="padding:56px 60px 40px;box-sizing:border-box;">
+  <div style="max-width:1360px;margin:0 auto;">
+    <div style="font-family:'Newsreader',Georgia,serif;font-size:30px;color:#26302a;font-weight:500;letter-spacing:-0.01em;">Guided intake — one question at a time</div>
+    <div style="font-family:'Hanken Grotesk',sans-serif;font-size:15px;color:#6a766e;margin-top:8px;max-width:640px;line-height:1.5;">A calm, product-style intake — not a chatbot. It walks through a few focused questions, then the AI combines the laws and rights that apply into a tailored plan. Try it live.</div>
+    <div style="display:flex;flex-wrap:wrap;gap:56px;margin-top:44px;align-items:flex-start;">
+      <div id="2a" style="display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;align-items:center;gap:10px;font-family:'Hanken Grotesk',sans-serif;">
+          <span style="background:#37624a;color:#fff;font-size:13px;font-weight:600;padding:3px 11px;border-radius:8px;">2a</span>
+          <span style="font-size:14px;color:#5d6b63;">Guided intake — step by step, AI-powered</span>
+        </div>
+        <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="402" height="874" hint-size="402px,874px">
+          <div style="height:100%;display:flex;flex-direction:column;font-family:'Hanken Grotesk',system-ui,sans-serif;color:#1c2620;background:#f4f1ea;">
+
+            <div style="padding:54px 18px 14px;">
+              <div style="display:flex;align-items:center;gap:11px;">
+                <div style="width:36px;height:36px;border-radius:12px;background:#274736;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:11px;height:11px;border-radius:50%;background:#8fc2a0;"></div></div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:10px;letter-spacing:1.5px;color:#9aa49b;font-weight:600;text-transform:uppercase;">New case · guided intake</div>
+                  <div style="font-family:'Newsreader',Georgia,serif;font-size:19px;color:#1c2620;font-weight:600;line-height:1.15;">Consumer Rights AI</div>
+                </div>
+              </div>
+            </div>
+
+            <sc-if value="{{ phaseForm }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;display:flex;flex-direction:column;min-height:0;">
+              <div style="padding:0 20px;margin-bottom:20px;">
+                <div style="height:4px;border-radius:2px;background:#e2ddd0;overflow:hidden;">
+                  <div style="height:100%;border-radius:2px;background:#37624a;width:{{ progressPct }};transition:width 0.4s ease;"></div>
+                </div>
+              </div>
+              <div style="flex:1;overflow-y:auto;padding:0 20px;" class="chatscroll">
+                <div style="font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#9aa49b;font-weight:600;">Question {{ qNumber }}</div>
+                <div style="font-family:'Newsreader',serif;font-size:25px;font-weight:600;color:#1c2620;line-height:1.18;margin-top:8px;">{{ question }}</div>
+                <div style="font-size:13.5px;color:#6a766e;line-height:1.5;margin-top:8px;">{{ help }}</div>
+                <div style="margin-top:22px;">
+                  <sc-if value="{{ stepChoice }}">
+                    <div style="display:flex;flex-direction:column;gap:9px;">
+                      <sc-for list="{{ choiceOptions }}" as="o" hint-placeholder-count="6">
+                        <div onClick="{{ o.onClick }}" style="background:#fff;border:1px solid #ece7db;border-radius:14px;padding:15px 16px;font-size:15px;font-weight:500;color:#1c2620;cursor:pointer;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 2px rgba(28,38,32,0.04);"><span>{{ o.label }}</span><span style="color:#c3ccc4;font-size:18px;">›</span></div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ stepMulti }}">
+                    <div style="display:flex;flex-wrap:wrap;gap:9px;">
+                      <sc-for list="{{ multiOptions }}" as="o" hint-placeholder-count="6">
+                        <sc-if value="{{ o.selected }}"><div onClick="{{ o.onClick }}" style="background:#37624a;border:1px solid #37624a;color:#fff;border-radius:12px;padding:11px 15px;font-size:14px;font-weight:500;cursor:pointer;">{{ o.label }}</div></sc-if>
+                        <sc-if value="{{ o.unselected }}"><div onClick="{{ o.onClick }}" style="background:#fff;border:1px solid #ddd7c9;color:#33403a;border-radius:12px;padding:11px 15px;font-size:14px;font-weight:500;cursor:pointer;">{{ o.label }}</div></sc-if>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ stepArea }}">
+                    <textarea class="ci" value="{{ draft }}" onInput="{{ setDraft }}" placeholder="{{ placeholder }}" style="width:100%;min-height:120px;resize:none;border:1px solid #ddd7c9;background:#fff;border-radius:14px;padding:14px;font-size:15px;line-height:1.5;font-family:'Hanken Grotesk',sans-serif;color:#1c2620;box-sizing:border-box;"></textarea>
+                  </sc-if>
+                  <sc-if value="{{ stepText }}">
+                    <input class="ci" value="{{ draft }}" onInput="{{ setDraft }}" placeholder="{{ placeholder }}" style="width:100%;border:1px solid #ddd7c9;background:#fff;border-radius:14px;padding:14px;font-size:15px;font-family:'Hanken Grotesk',sans-serif;color:#1c2620;box-sizing:border-box;" />
+                  </sc-if>
+                  <sc-if value="{{ stepAmount }}">
+                    <div style="display:flex;align-items:center;border:1px solid #ddd7c9;background:#fff;border-radius:14px;padding:2px 14px;">
+                      <span style="font-family:'Newsreader',serif;font-size:24px;color:#8a948b;margin-right:6px;">$</span>
+                      <input class="ci" value="{{ draft }}" onInput="{{ setDraft }}" placeholder="{{ placeholder }}" inputmode="decimal" style="flex:1;border:none;background:transparent;padding:12px 0;font-family:'Newsreader',serif;font-size:24px;color:#1c2620;box-sizing:border-box;" />
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+              <sc-if value="{{ footerVisible }}">
+                <div style="padding:12px 20px 30px;display:flex;gap:10px;align-items:center;">
+                  <sc-if value="{{ canBack }}"><div onClick="{{ back }}" style="width:50px;height:50px;border-radius:14px;border:1px solid #ddd7c9;background:#fff;display:flex;align-items:center;justify-content:center;color:#5d6b63;font-size:18px;cursor:pointer;flex-shrink:0;">‹</div></sc-if>
+                  <sc-if value="{{ showContinue }}">
+                    <sc-if value="{{ canContinue }}"><div onClick="{{ next }}" style="flex:1;background:#37624a;color:#eef3ee;font-size:15px;font-weight:600;border-radius:14px;padding:16px;text-align:center;cursor:pointer;">Continue</div></sc-if>
+                    <sc-if value="{{ cannotContinue }}"><div style="flex:1;background:#e0e4dd;color:#a7b0a8;font-size:15px;font-weight:600;border-radius:14px;padding:16px;text-align:center;">Continue</div></sc-if>
+                  </sc-if>
+                </div>
+              </sc-if>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ phaseAnalyzing }}">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;">
+                <div style="width:56px;height:56px;border-radius:50%;border:3px solid #e2ddd0;border-top-color:#37624a;animation:spin 0.9s linear infinite;"></div>
+                <div style="font-family:'Newsreader',serif;font-size:22px;font-weight:600;color:#1c2620;margin-top:26px;">{{ analyzingTitle }}</div>
+                <div style="font-size:13.5px;color:#6a766e;line-height:1.5;margin-top:8px;max-width:260px;">Matching your situation to the laws and rights that apply, and finding what to ask next.</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ phaseError }}">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:34px;text-align:center;">
+                <div style="width:52px;height:52px;border-radius:50%;background:#f4e6d3;display:flex;align-items:center;justify-content:center;color:#a37a52;font-size:24px;">!</div>
+                <div style="font-family:'Newsreader',serif;font-size:21px;font-weight:600;color:#1c2620;margin-top:20px;">That didn't go through</div>
+                <div style="font-size:13.5px;color:#6a766e;line-height:1.5;margin-top:8px;max-width:250px;">We couldn't reach the analysis just now. Your answers are saved — let's try that again.</div>
+                <div onClick="{{ retry }}" style="margin-top:22px;background:#37624a;color:#eef3ee;font-size:14.5px;font-weight:600;border-radius:13px;padding:13px 30px;cursor:pointer;">Try again</div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ phaseResult }}">
+              <div class="chatscroll" style="flex:1;overflow-y:auto;padding:14px 18px 30px;">
+                <div style="font-size:11px;letter-spacing:1.4px;font-weight:600;color:#5c8a6e;text-transform:uppercase;">Your tailored plan</div>
+                <div style="font-family:'Newsreader',serif;font-size:24px;font-weight:600;color:#1c2620;line-height:1.2;margin-top:5px;">{{ result.title }}</div>
+                <div style="font-size:14px;color:#5d6b63;line-height:1.55;margin-top:9px;">{{ result.summary }}</div>
+
+                <div style="font-size:11px;letter-spacing:1px;font-weight:600;color:#9aa49b;text-transform:uppercase;margin:18px 0 9px;">Rights on your side</div>
+                <div style="display:flex;flex-direction:column;gap:9px;">
+                  <sc-for list="{{ resultRights }}" as="r" hint-placeholder-count="3">
+                    <div style="display:flex;gap:9px;"><div style="width:7px;height:7px;border-radius:50%;background:#4d8a63;margin-top:6px;flex-shrink:0;"></div><div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:#1c2620;line-height:1.3;">{{ r.title }}</div><div style="font-size:11.5px;color:#9aa49b;margin-top:1px;">{{ r.law }}</div></div></div>
+                  </sc-for>
+                </div>
+
+                <div style="font-size:11px;letter-spacing:1px;font-weight:600;color:#9aa49b;text-transform:uppercase;margin:18px 0 9px;">Your options</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <sc-for list="{{ resultOptions }}" as="o" hint-placeholder-count="3">
+                    <div style="border:1px solid #ece7db;border-radius:13px;padding:12px 13px;background:#fff;"><div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;"><div style="font-size:13.5px;font-weight:600;color:#1c2620;">{{ o.name }}</div><div style="font-size:11px;color:#8a948b;white-space:nowrap;">{{ o.effort }} · {{ o.time }}</div></div><div style="font-size:12.5px;color:#6a766e;line-height:1.4;margin-top:3px;">{{ o.why }}</div></div>
+                  </sc-for>
+                </div>
+
+                <div style="background:#274736;border-radius:15px;padding:15px 16px;margin-top:18px;color:#eef3ee;">
+                  <div style="font-size:10.5px;letter-spacing:1.2px;font-weight:600;color:#9fc0ac;text-transform:uppercase;">Best next step</div>
+                  <div style="font-size:14.5px;font-weight:600;line-height:1.4;margin-top:4px;">{{ result.nextStep }}</div>
+                </div>
+
+                <div style="font-size:11px;letter-spacing:1px;font-weight:600;color:#9aa49b;text-transform:uppercase;margin:18px 0 9px;">Evidence to gather</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                  <sc-for list="{{ resultEvidence }}" as="ev" hint-placeholder-count="3"><span style="font-size:12px;color:#5d6b63;background:#f0ede4;border:1px solid #e6e1d4;border-radius:8px;padding:5px 10px;">{{ ev }}</span></sc-for>
+                </div>
+
+                <a href="#1a" style="display:block;margin-top:20px;background:#37624a;color:#eef3ee;font-size:14.5px;font-weight:600;border-radius:13px;padding:14px;text-align:center;">Open my case workspace ›</a>
+                <div onClick="{{ restart }}" style="text-align:center;margin-top:14px;font-size:13.5px;color:#6a766e;cursor:pointer;">Start a new case</div>
+              </div>
+            </sc-if>
+
+          </div>
+        </x-import>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="min-height:100vh;padding:56px 60px 90px;box-sizing:border-box;">
+  <div style="max-width:1360px;margin:0 auto;">
+    <div style="font-family:'Newsreader',Georgia,serif;font-size:30px;color:#26302a;font-weight:500;letter-spacing:-0.01em;">Consumer Rights AI — Case Workspace</div>
+    <div style="font-family:'Hanken Grotesk',sans-serif;font-size:15px;color:#6a766e;margin-top:8px;max-width:620px;line-height:1.5;">A mobile case workspace for a landlord security-deposit dispute. Option 1a is fully clickable — tap the tabs. 1b and 1c explore alternate Overview treatments.</div>
+    <div style="display:flex;flex-wrap:wrap;gap:56px;margin-top:44px;align-items:flex-start;">
+
+      <div id="1a" style="display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;align-items:center;gap:10px;font-family:'Hanken Grotesk',sans-serif;">
+          <span style="background:#37624a;color:#fff;font-size:13px;font-weight:600;padding:3px 11px;border-radius:8px;">1a</span>
+          <span style="font-size:14px;color:#5d6b63;">Clickable workspace — full navigation</span>
+        </div>
+        <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="402" height="874" hint-size="402px,874px">
+          <div style="font-family:'Hanken Grotesk',system-ui,sans-serif;color:#1c2620;min-height:100%;background:#f4f1ea;">
+
+            <div style="position:sticky;top:0;z-index:9;background:#f4f1ea;padding:54px 18px 0;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:34px;height:34px;border-radius:12px;background:#fff;border:1px solid #ece7db;display:flex;align-items:center;justify-content:center;color:#5d6b63;font-size:18px;line-height:1;flex-shrink:0;">‹</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:10px;letter-spacing:1.5px;color:#9aa49b;font-weight:600;text-transform:uppercase;">Case file · Strong position</div>
+                  <div style="font-family:'Newsreader',Georgia,serif;font-size:21px;color:#1c2620;font-weight:600;line-height:1.15;">Security deposit dispute</div>
+                </div>
+                <div style="width:9px;height:9px;border-radius:50%;background:#4d8a63;box-shadow:0 0 0 4px rgba(77,138,99,0.15);flex-shrink:0;"></div>
+              </div>
+              <div style="color:#6a766e;font-size:12.5px;margin:5px 0 12px 44px;">Meridian Property Group · Opened Jul 2, 2026</div>
+              <div class="tabscroll" style="display:flex;gap:7px;overflow-x:auto;margin:0 -18px;padding:0 18px 12px;">
+                <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="8">
+                  <div onClick="{{ t.onClick }}" style="position:relative;flex:0 0 auto;padding:8px 15px;border-radius:11px;cursor:pointer;">
+                    <sc-if value="{{ t.active }}"><div style="position:absolute;inset:0;border-radius:11px;background:#37624a;"></div></sc-if>
+                    <sc-if value="{{ t.active }}"><span style="position:relative;font-size:13.5px;font-weight:600;color:#fff;white-space:nowrap;">{{ t.label }}</span></sc-if>
+                    <sc-if value="{{ t.inactive }}"><span style="position:relative;font-size:13.5px;font-weight:500;color:#6a766e;white-space:nowrap;">{{ t.label }}</span></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="height:1px;background:#e7e2d7;margin:0 -18px;"></div>
+            </div>
+
+            <div style="padding:18px 18px 44px;">
+
+              <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div style="background:#274736;border-radius:22px;padding:22px 20px;color:#eef3ee;position:relative;overflow:hidden;">
+                  <div style="font-size:10.5px;letter-spacing:1.5px;font-weight:600;color:#9fc0ac;text-transform:uppercase;">Estimated recovery</div>
+                  <div style="font-family:'Newsreader',Georgia,serif;font-size:44px;font-weight:500;line-height:1.05;margin-top:8px;">$2,400–$4,800</div>
+                  <div style="font-size:13.5px;color:#c7d6ca;margin-top:8px;line-height:1.45;">Your $2,400 deposit back, plus up to 2× in bad-faith penalties under California law.</div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.12);">
+                    <div style="display:flex;gap:3px;">
+                      <div style="width:16px;height:6px;border-radius:3px;background:#8fc2a0;"></div>
+                      <div style="width:16px;height:6px;border-radius:3px;background:#8fc2a0;"></div>
+                      <div style="width:16px;height:6px;border-radius:3px;background:#8fc2a0;"></div>
+                      <div style="width:16px;height:6px;border-radius:3px;background:#8fc2a0;"></div>
+                      <div style="width:16px;height:6px;border-radius:3px;background:rgba(255,255,255,0.18);"></div>
+                    </div>
+                    <span style="font-size:12.5px;color:#c7d6ca;">Strong position · 4 of 5</span>
+                  </div>
+                </div>
+
+                <div style="background:#fff;border:1px solid #ece7db;border-radius:18px;padding:16px 17px;box-shadow:0 1px 2px rgba(28,38,32,0.04);">
+                  <div style="font-size:10.5px;letter-spacing:1.4px;font-weight:600;color:#9aa49b;text-transform:uppercase;margin-bottom:7px;">What happened</div>
+                  <div style="font-size:14.5px;line-height:1.5;color:#33403a;">You moved out on May 31 and left the unit clean and photographed. It's now past the 21-day legal deadline, and Meridian has kept your full $2,400 deposit with no itemized statement — a likely violation of your rights.</div>
+                </div>
+
+                <div onClick="{{ goDocs }}" style="background:#eef3ee;border:1px solid #d5e2d8;border-radius:18px;padding:16px 17px;cursor:pointer;display:flex;align-items:center;gap:14px;">
+                  <div style="width:40px;height:40px;border-radius:12px;background:#37624a;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <div style="width:14px;height:17px;background:#fff;border-radius:2px;position:relative;"></div>
+                  </div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:10.5px;letter-spacing:1.2px;font-weight:600;color:#5c8a6e;text-transform:uppercase;">Recommended next step</div>
+                    <div style="font-size:15.5px;font-weight:600;color:#1c2620;margin-top:2px;">Send a demand letter</div>
+                    <div style="font-size:12.5px;color:#6a766e;margin-top:2px;">Free · likely resolves in 1–2 weeks</div>
+                  </div>
+                  <div style="color:#37624a;font-size:20px;flex-shrink:0;">›</div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                  <div onClick="{{ goRights }}" style="background:#fff;border:1px solid #ece7db;border-radius:16px;padding:14px 15px;cursor:pointer;">
+                    <div style="font-family:'Newsreader',serif;font-size:26px;font-weight:600;color:#274736;">5</div>
+                    <div style="font-size:12.5px;color:#6a766e;margin-top:2px;">Rights on your side</div>
+                  </div>
+                  <div onClick="{{ goOptions }}" style="background:#fff;border:1px solid #ece7db;border-radius:16px;padding:14px 15px;cursor:pointer;">
+                    <div style="font-family:'Newsreader',serif;font-size:26px;font-weight:600;color:#274736;">4</div>
+                    <div style="font-size:12.5px;color:#6a766e;margin-top:2px;">Ways to resolve it</div>
+                  </div>
+                  <div onClick="{{ goEvidence }}" style="background:#fff;border:1px solid #ece7db;border-radius:16px;padding:14px 15px;cursor:pointer;">
+                    <div style="font-family:'Newsreader',serif;font-size:26px;font-weight:600;color:#274736;">4<span style="font-size:16px;color:#9aa49b;">/7</span></div>
+                    <div style="font-size:12.5px;color:#6a766e;margin-top:2px;">Evidence gathered</div>
+                  </div>
+                  <div onClick="{{ goSimilar }}" style="background:#fff;border:1px solid #ece7db;border-radius:16px;padding:14px 15px;cursor:pointer;">
+                    <div style="font-family:'Newsreader',serif;font-size:26px;font-weight:600;color:#274736;">3</div>
+                    <div style="font-size:12.5px;color:#6a766e;margin-top:2px;">Similar cases won</div>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:8px;align-items:flex-start;padding:2px 4px;margin-top:2px;">
+                  <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid #b6bdb4;color:#8a948b;font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">i</div>
+                  <div style="font-size:11.5px;color:#8a948b;line-height:1.45;">This is legal information to help you decide, not legal advice. For a binding opinion, consult a licensed attorney.</div>
+                </div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ isTimeline }}">
+              <div>
+                <div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:#1c2620;margin-bottom:4px;">Timeline of events</div>
+                <div style="font-size:13px;color:#6a766e;margin-bottom:18px;">Built automatically from your documents and answers.</div>
+                <div style="position:relative;padding-left:8px;">
+                  <sc-for list="{{ timeline }}" as="e" hint-placeholder-count="6">
+                    <div style="position:relative;padding:0 0 20px 26px;border-left:2px solid #e2ddd0;">
+                      <sc-if value="{{ e.flag }}"><div style="position:absolute;left:-8px;top:1px;width:14px;height:14px;border-radius:50%;background:#b0763a;box-shadow:0 0 0 4px #f4f1ea;"></div></sc-if>
+                      <sc-if value="{{ e.normal }}"><div style="position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #9db3a4;box-shadow:0 0 0 4px #f4f1ea;"></div></sc-if>
+                      <div style="font-size:11.5px;font-weight:600;color:#8a948b;letter-spacing:0.3px;">{{ e.date }} · 2026</div>
+                      <div style="font-size:15px;font-weight:600;color:#1c2620;margin-top:2px;">{{ e.title }}</div>
+                      <div style="font-size:13px;color:#5d6b63;line-height:1.45;margin-top:3px;">{{ e.note }}</div>
+                      <sc-if value="{{ e.flag }}"><div style="display:inline-block;margin-top:7px;font-size:11px;font-weight:600;color:#96602c;background:#f4e6d3;border-radius:7px;padding:3px 9px;">Deadline missed by landlord</div></sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ isRights }}">
+              <div>
+                <div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:#1c2620;margin-bottom:4px;">Your rights, in plain English</div>
+                <div style="font-size:13px;color:#6a766e;margin-bottom:18px;">Based on California residential tenancy law.</div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <sc-for list="{{ rights }}" as="r" hint-placeholder-count="5">
+                    <div style="background:#fff;border:1px solid #ece7db;border-radius:18px;padding:16px 17px;box-shadow:0 1px 2px rgba(28,38,32,0.04);">
+                      <div style="display:flex;gap:11px;">
+                        <div style="width:26px;height:26px;border-radius:8px;background:#eef3ee;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:9px;height:9px;border-radius:50%;background:#4d8a63;"></div></div>
+                        <div style="flex:1;">
+                          <div style="font-size:15px;font-weight:600;color:#1c2620;line-height:1.3;">{{ r.title }}</div>
+                          <div style="font-size:11px;color:#9aa49b;margin-top:3px;font-weight:500;">{{ r.law }}</div>
+                        </div>
+                      </div>
+                      <div style="font-size:13.5px;color:#5d6b63;line-height:1.5;margin-top:10px;">{{ r.body }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ isOptions }}">
+              <div>
+                <div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:#1c2620;margin-bottom:4px;">Your options</div>
+                <div style="font-size:13px;color:#6a766e;margin-bottom:18px;">Ranked by effort and likelihood of recovery.</div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <sc-for list="{{ options }}" as="o" hint-placeholder-count="4">
+                    <div style="background:#fff;border:1px solid #ece7db;border-radius:18px;padding:16px 17px;box-shadow:0 1px 2px rgba(28,38,32,0.04);">
+                      <sc-if value="{{ o.recommended }}"><div style="display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:1px;color:#fff;background:#37624a;border-radius:7px;padding:3px 9px;margin-bottom:10px;text-transform:uppercase;">Recommended</div></sc-if>
+                      <div style="font-size:16px;font-weight:600;color:#1c2620;">{{ o.name }}</div>
+                      <div style="font-size:13.5px;color:#5d6b63;line-height:1.5;margin-top:5px;">{{ o.desc }}</div>
+                      <div style="display:flex;gap:16px;margin-top:12px;padding:11px 0;border-top:1px solid #f0ebe0;border-bottom:1px solid #f0ebe0;">
+                        <div><div style="font-size:10px;color:#9aa49b;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Effort</div><div style="font-size:13px;color:#33403a;font-weight:600;margin-top:2px;">{{ o.effort }}</div></div>
+                        <div><div style="font-size:10px;color:#9aa49b;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Timeline</div><div style="font-size:13px;color:#33403a;font-weight:600;margin-top:2px;">{{ o.time }}</div></div>
+                        <div><div style="font-size:10px;color:#9aa49b;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;">Cost</div><div style="font-size:13px;color:#33403a;font-weight:600;margin-top:2px;">{{ o.cost }}</div></div>
+                      </div>
+                      <div style="display:flex;gap:14px;margin-top:12px;">
+                        <div style="flex:1;">
+                          <div style="font-size:11px;color:#5c8a6e;font-weight:600;margin-bottom:5px;">Pros</div>
+                          <sc-for list="{{ o.pros }}" as="p" hint-placeholder-count="3"><div style="font-size:12.5px;color:#5d6b63;line-height:1.4;margin-bottom:3px;">+ {{ p }}</div></sc-for>
+                        </div>
+                        <div style="flex:1;">
+                          <div style="font-size:11px;color:#a37a52;font-weight:600;margin-bottom:5px;">Cons</div>
+                          <sc-for list="{{ o.cons }}" as="c" hint-placeholder-count="2"><div style="font-size:12.5px;color:#8a948b;line-height:1.4;margin-bottom:3px;">– {{ c }}</div></sc-for>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ isPlan }}">
+              <div>
+                <div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:#1c2620;margin-bottom:4px;">Your action plan</div>
+                <div style="font-size:13px;color:#6a766e;margin-bottom:16px;">1 of 5 steps complete.</div>
+                <div style="height:6px;border-radius:3px;background:#e2ddd0;overflow:hidden;margin-bottom:20px;"><div style="width:20%;height:100%;background:#4d8a63;border-radius:3px;"></div></div>
+                <div style="display:flex;flex-direction:column;gap:11px;">
+                  <sc-for list="{{ plan }}" as="s" hint-placeholder-count="5">
+                    <div style="display:flex;gap:13px;background:#fff;border:1px solid #ece7db;border-radius:16px;padding:14px 15px;">
+                      <sc-if value="{{ s.done }}"><div style="width:28px;height:28px;border-radius:50%;background:#4d8a63;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✓</div></sc-if>
+                      <sc-if value="{{ s.current }}"><div style="width:28px;height:28px;border-radius:50%;background:#37624a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">{{ s.n }}</div></sc-if>
+                      <sc-if value="{{ s.upcoming }}"><div style="width:28px;height:28px;border-radius:50%;background:#f0ebe0;color:#9aa49b;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">{{ s.n }}</div></sc-if>
+                      <div style="flex:1;">
+                        <div style="display:flex;align-items:center;gap:8px;"><div style="font-size:14.5px;font-weight:600;color:#1c2620;">{{ s.title }}</div><sc-if value="{{ s.current }}"><span style="font-size:10.5px;font-weight:600;color:#37624a;background:#eef3ee;border-radius:6px;padding:2px 7px;">Next up</span></sc-if></div>
+                        <div style="font-size:12.5px;color:#6a766e;line-height:1.45;margin-top:3px;">{{ s.desc }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ isEvidence }}">
+              <div>
+                <div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:#1c2620;margin-bottom:4px;">Evidence center</div>
+                <div style="font-size:13px;color:#6a766e;margin-bottom:16px;">Your case is strong — 3 additions would make it airtight.</div>
+                <div style="font-size:11px;letter-spacing:1.2px;font-weight:600;color:#5c8a6e;text-transform:uppercase;margin-bottom:9px;">You have this</div>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+                  <sc-for list="{{ evHave }}" as="h" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #ece7db;border-radius:14px;padding:12px 14px;">
+                      <div style="width:24px;height:24px;border-radius:7px;background:#eef3ee;color:#4d8a63;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;">✓</div>
+                      <div style="flex:1;"><div style="font-size:14px;font-weight:500;color:#1c2620;">{{ h.name }}</div><div style="font-size:11.5px;color:#9aa49b;">{{ h.meta }}</div></div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="font-size:11px;letter-spacing:1.2px;font-weight:600;color:#a37a52;text-transform:uppercase;margin-bottom:9px;">Would strengthen your case</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <sc-for list="{{ evMissing }}" as="m" hint-placeholder-count="3">
+                    <div style="background:#fbf7f0;border:1px solid #ecdfcb;border-radius:14px;padding:13px 14px;">
+                      <div style="display:flex;align-items:center;gap:12px;"><div style="width:24px;height:24px;border-radius:7px;background:#f4e6d3;color:#a37a52;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">+</div><div style="font-size:14px;font-weight:600;color:#1c2620;flex:1;">{{ m.name }}</div></div>
+                      <div style="font-size:12.5px;color:#7d766a;line-height:1.45;margin-top:8px;padding-left:36px;">{{ m.why }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ isSimilar }}">
+              <div>
+                <div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:#1c2620;margin-bottom:4px;">Similar situations</div>
+                <div style="font-size:13px;color:#6a766e;margin-bottom:16px;">How comparable deposit disputes have resolved.</div>
+                <div style="display:flex;gap:10px;margin-bottom:18px;">
+                  <div style="flex:1;background:#274736;border-radius:16px;padding:14px 13px;color:#eef3ee;"><div style="font-family:'Newsreader',serif;font-size:24px;font-weight:600;">68%</div><div style="font-size:11.5px;color:#c7d6ca;margin-top:2px;line-height:1.3;">resolved after a demand letter</div></div>
+                  <div style="flex:1;background:#fff;border:1px solid #ece7db;border-radius:16px;padding:14px 13px;"><div style="font-family:'Newsreader',serif;font-size:24px;font-weight:600;color:#274736;">$2,100</div><div style="font-size:11.5px;color:#6a766e;margin-top:2px;line-height:1.3;">average amount recovered</div></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:11px;">
+                  <sc-for list="{{ similar }}" as="s" hint-placeholder-count="3">
+                    <div style="background:#fff;border:1px solid #ece7db;border-radius:16px;padding:15px 16px;">
+                      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+                        <div style="font-size:14.5px;font-weight:600;color:#1c2620;flex:1;">{{ s.title }}</div>
+                        <div style="font-family:'Newsreader',serif;font-size:18px;font-weight:600;color:#4d8a63;flex-shrink:0;">{{ s.amount }}</div>
+                      </div>
+                      <div style="font-size:13px;color:#5d6b63;line-height:1.45;margin-top:6px;">{{ s.outcome }}</div>
+                      <div style="font-size:11.5px;color:#9aa49b;margin-top:8px;font-weight:500;">{{ s.time }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{ isDocs }}">
+              <div>
+                <div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:#1c2620;margin-bottom:4px;">Documents</div>
+                <div style="font-size:13px;color:#6a766e;margin-bottom:16px;">Generated for your case, ready to review.</div>
+                <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:20px;">
+                  <sc-for list="{{ docs }}" as="d" hint-placeholder-count="3">
+                    <div style="background:#fff;border:1px solid #ece7db;border-radius:16px;padding:15px 16px;">
+                      <div style="display:flex;align-items:center;gap:12px;">
+                        <div style="width:38px;height:38px;border-radius:11px;background:#eef3ee;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:13px;height:16px;background:#37624a;border-radius:2px;"></div></div>
+                        <div style="flex:1;"><div style="font-size:15px;font-weight:600;color:#1c2620;">{{ d.name }}</div><div style="font-size:12px;color:#9aa49b;">{{ d.desc }}</div></div>
+                      </div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
+                        <span style="font-size:11px;font-weight:600;color:#5c8a6e;background:#eef3ee;border-radius:7px;padding:3px 10px;">{{ d.status }}</span>
+                        <span style="font-size:13px;font-weight:600;color:#37624a;">Open ›</span>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="background:#fffdf9;border:1px solid #ece7db;border-radius:16px;padding:18px 18px;font-family:'Newsreader',Georgia,serif;color:#33403a;line-height:1.6;box-shadow:0 1px 2px rgba(28,38,32,0.04);">
+                  <div style="font-size:12px;font-family:'Hanken Grotesk',sans-serif;color:#9aa49b;letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:12px;">Demand letter · preview</div>
+                  <div style="font-size:13.5px;">Dear Meridian Property Group,</div>
+                  <div style="font-size:13.5px;margin-top:10px;">I vacated 214 Oakwood Ave on May 31, 2026 and provided a forwarding address. Under California Civil Code § 1950.5, my $2,400 security deposit and any itemized deductions were due within 21 days. That deadline has passed without response.</div>
+                  <div style="font-size:13.5px;margin-top:10px;">I request the full return of $2,400 within 14 days. If unresolved, I intend to pursue the bad-faith penalty of up to twice the deposit in small claims court…</div>
+                </div>
+              </div>
+              </sc-if>
+
+            </div>
+          </div>
+        </x-import>
+      </div>
+
+      <div id="1b" style="display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;align-items:center;gap:10px;font-family:'Hanken Grotesk',sans-serif;">
+          <span style="background:#37624a;color:#fff;font-size:13px;font-weight:600;padding:3px 11px;border-radius:8px;">1b</span>
+          <span style="font-size:14px;color:#5d6b63;">Overview — confidence-forward</span>
+        </div>
+        <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="402" height="874" hint-size="402px,874px">
+          <div style="font-family:'Hanken Grotesk',system-ui,sans-serif;color:#1c2620;min-height:100%;background:#f4f1ea;">
+            <div style="padding:54px 18px 0;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:34px;height:34px;border-radius:12px;background:#fff;border:1px solid #ece7db;display:flex;align-items:center;justify-content:center;color:#5d6b63;font-size:18px;line-height:1;flex-shrink:0;">‹</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:10px;letter-spacing:1.5px;color:#9aa49b;font-weight:600;text-transform:uppercase;">Case file</div>
+                  <div style="font-family:'Newsreader',Georgia,serif;font-size:21px;color:#1c2620;font-weight:600;line-height:1.15;">Security deposit dispute</div>
+                </div>
+              </div>
+              <div style="color:#6a766e;font-size:12.5px;margin:5px 0 16px 44px;">Meridian Property Group · Opened Jul 2, 2026</div>
+            </div>
+            <div style="padding:6px 18px 44px;display:flex;flex-direction:column;gap:16px;">
+              <div style="background:#fff;border:1px solid #ece7db;border-radius:24px;padding:26px 20px 24px;text-align:center;box-shadow:0 1px 2px rgba(28,38,32,0.04);">
+                <div style="width:158px;height:158px;border-radius:50%;background:conic-gradient(#4d8a63 0deg 288deg,#e6e1d4 288deg 360deg);display:flex;align-items:center;justify-content:center;margin:0 auto 4px;">
+                  <div style="width:124px;height:124px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                    <div style="font-family:'Newsreader',serif;font-size:30px;font-weight:600;color:#274736;line-height:1;">Strong</div>
+                    <div style="font-size:12px;color:#8a948b;margin-top:4px;">4 of 5 factors</div>
+                  </div>
+                </div>
+                <div style="font-size:15px;font-weight:600;color:#1c2620;margin-top:14px;">You have a strong position.</div>
+                <div style="font-size:13px;color:#6a766e;line-height:1.5;margin-top:6px;">The 21-day deadline passed with no itemized statement — a clear violation that courts tend to favor.</div>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <div style="flex:1;background:#274736;border-radius:16px;padding:14px 14px;color:#eef3ee;"><div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#9fc0ac;font-weight:600;">Recover</div><div style="font-family:'Newsreader',serif;font-size:24px;font-weight:500;margin-top:3px;">$2.4–4.8k</div></div>
+                <div style="flex:1;background:#fff;border:1px solid #ece7db;border-radius:16px;padding:14px 14px;"><div style="font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#9aa49b;font-weight:600;">Deadline</div><div style="font-family:'Newsreader',serif;font-size:24px;font-weight:600;color:#274736;margin-top:3px;">4 yrs</div></div>
+              </div>
+              <div style="background:#eef3ee;border:1px solid #d5e2d8;border-radius:18px;padding:16px 17px;display:flex;align-items:center;gap:14px;">
+                <div style="width:40px;height:40px;border-radius:12px;background:#37624a;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:14px;height:17px;background:#fff;border-radius:2px;"></div></div>
+                <div style="flex:1;"><div style="font-size:10.5px;letter-spacing:1.2px;font-weight:600;color:#5c8a6e;text-transform:uppercase;">Recommended</div><div style="font-size:15.5px;font-weight:600;color:#1c2620;margin-top:2px;">Send a demand letter</div></div>
+                <div style="color:#37624a;font-size:20px;">›</div>
+              </div>
+            </div>
+          </div>
+        </x-import>
+      </div>
+
+      <div id="1c" style="display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;align-items:center;gap:10px;font-family:'Hanken Grotesk',sans-serif;">
+          <span style="background:#37624a;color:#fff;font-size:13px;font-weight:600;padding:3px 11px;border-radius:8px;">1c</span>
+          <span style="font-size:14px;color:#5d6b63;">Overview — action / checklist-forward</span>
+        </div>
+        <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="402" height="874" hint-size="402px,874px">
+          <div style="font-family:'Hanken Grotesk',system-ui,sans-serif;color:#1c2620;min-height:100%;background:#f4f1ea;">
+            <div style="padding:54px 18px 0;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:34px;height:34px;border-radius:12px;background:#fff;border:1px solid #ece7db;display:flex;align-items:center;justify-content:center;color:#5d6b63;font-size:18px;line-height:1;flex-shrink:0;">‹</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:10px;letter-spacing:1.5px;color:#9aa49b;font-weight:600;text-transform:uppercase;">Case file · Strong position</div>
+                  <div style="font-family:'Newsreader',Georgia,serif;font-size:21px;color:#1c2620;font-weight:600;line-height:1.15;">Security deposit dispute</div>
+                </div>
+              </div>
+              <div style="color:#6a766e;font-size:12.5px;margin:5px 0 16px 44px;">Meridian Property Group · $2,400 at stake</div>
+            </div>
+            <div style="padding:6px 18px 44px;display:flex;flex-direction:column;gap:14px;">
+              <div style="background:#274736;border-radius:22px;padding:20px 19px;color:#eef3ee;">
+                <div style="font-size:10.5px;letter-spacing:1.4px;font-weight:600;color:#9fc0ac;text-transform:uppercase;">Do this next</div>
+                <div style="font-family:'Newsreader',serif;font-size:24px;font-weight:500;margin-top:6px;line-height:1.2;">Send your demand letter</div>
+                <div style="font-size:13px;color:#c7d6ca;margin-top:7px;line-height:1.45;">We've drafted it citing the 21-day rule. Free, and most disputes resolve within two weeks.</div>
+                <div style="margin-top:15px;background:#eef3ee;color:#274736;font-size:14px;font-weight:600;border-radius:12px;padding:12px;text-align:center;">Review &amp; send letter</div>
+              </div>
+              <div style="background:#fff;border:1px solid #ece7db;border-radius:18px;padding:16px 17px;box-shadow:0 1px 2px rgba(28,38,32,0.04);">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div style="font-size:13.5px;font-weight:600;color:#1c2620;">Your progress</div><div style="font-size:12px;color:#8a948b;">1 of 5</div></div>
+                <div style="display:flex;flex-direction:column;gap:11px;">
+                  <div style="display:flex;align-items:center;gap:11px;"><div style="width:22px;height:22px;border-radius:50%;background:#4d8a63;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">✓</div><div style="font-size:13.5px;color:#8a948b;text-decoration:line-through;">Gather your evidence</div></div>
+                  <div style="display:flex;align-items:center;gap:11px;"><div style="width:22px;height:22px;border-radius:50%;background:#37624a;flex-shrink:0;"></div><div style="font-size:13.5px;color:#1c2620;font-weight:600;">Send the demand letter</div></div>
+                  <div style="display:flex;align-items:center;gap:11px;"><div style="width:22px;height:22px;border-radius:50%;background:#f0ebe0;flex-shrink:0;"></div><div style="font-size:13.5px;color:#6a766e;">Wait 14 days for a response</div></div>
+                  <div style="display:flex;align-items:center;gap:11px;"><div style="width:22px;height:22px;border-radius:50%;background:#f0ebe0;flex-shrink:0;"></div><div style="font-size:13.5px;color:#6a766e;">File in small claims if unresolved</div></div>
+                </div>
+              </div>
+              <div style="display:flex;gap:9px;">
+                <div style="flex:1;background:#fff;border:1px solid #ece7db;border-radius:14px;padding:12px;text-align:center;"><div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:#274736;">5</div><div style="font-size:11px;color:#6a766e;margin-top:1px;">Rights</div></div>
+                <div style="flex:1;background:#fff;border:1px solid #ece7db;border-radius:14px;padding:12px;text-align:center;"><div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:#274736;">4</div><div style="font-size:11px;color:#6a766e;margin-top:1px;">Options</div></div>
+                <div style="flex:1;background:#fff;border:1px solid #ece7db;border-radius:14px;padding:12px;text-align:center;"><div style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;color:#274736;">3</div><div style="font-size:11px;color:#6a766e;margin-top:1px;">Similar</div></div>
+              </div>
+            </div>
+          </div>
+        </x-import>
+      </div>
+
+    </div>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    tab: 'overview',
+    phase: 'form',
+    q: null,
+    qNumber: 1,
+    seedIndex: 0,
+    qStack: [],
+    history: [],
+    draft: '',
+    evidence: [],
+    busy: false,
+    error: false,
+    result: null,
+  };
+  go(tab) { return () => this.setState({ tab }); }
+
+  SEEDS() {
+    return [
+      { key:'category', kind:'choice', q:'What kind of problem are you dealing with?', help:'Pick the closest match — the next questions adapt to what you choose.', options:['Deposit or housing','Refund or defective product','Airline or travel','Subscription or billing','Insurance claim','Employment','Something else'] },
+      { key:'describe', kind:'textarea', q:'In your own words, what happened?', help:'Plain English is perfect — what you expected, and what went wrong.', placeholder:'e.g. My landlord kept my $2,400 deposit and stopped replying.' },
+    ];
+  }
+  currentQ() { return this.state.q || this.SEEDS()[0]; }
+  setDraft = (e) => this.setState({ draft: e.target.value });
+  pickChoice = (val) => () => this.answerCurrent(val);
+  toggleEvidence = (val) => () => {
+    const evidence = this.state.evidence.includes(val) ? this.state.evidence.filter(x => x !== val) : [...this.state.evidence, val];
+    this.setState({ evidence });
+  };
+  next = () => {
+    const q = this.currentQ();
+    const val = q.kind === 'multichoice' ? this.state.evidence : this.state.draft.trim();
+    this.answerCurrent(val);
+  };
+  restart = () => this.setState({ phase:'form', q:null, qNumber:1, seedIndex:0, qStack:[], history:[], draft:'', evidence:[], busy:false, result:null });
+  back = () => {
+    const stack = this.state.qStack;
+    if (!stack.length) return;
+    const prevQ = stack[stack.length - 1];
+    const history = this.state.history.slice(0, -1);
+    const lastEntry = this.state.history[this.state.history.length - 1];
+    const lastAns = lastEntry ? lastEntry.answer : '';
+    const seedKeys = this.SEEDS().map(s => s.key);
+    const si = seedKeys.indexOf(prevQ.key);
+    this.setState({
+      q: prevQ, qStack: stack.slice(0, -1), history,
+      qNumber: Math.max(1, this.state.qNumber - 1),
+      seedIndex: si >= 0 ? si : this.SEEDS().length,
+      draft: typeof lastAns === 'string' ? lastAns : '',
+      evidence: Array.isArray(lastAns) ? lastAns : [],
+    });
+  };
+  answerCurrent(val) {
+    const q = this.currentQ();
+    const history = [...this.state.history, { key: q.key, q: q.q, answer: val }];
+    const qStack = [...this.state.qStack, q];
+    const seeds = this.SEEDS();
+    const nextSeed = this.state.seedIndex + 1;
+    if (nextSeed < seeds.length) {
+      this.setState({ history, qStack, seedIndex: nextSeed, q: seeds[nextSeed], qNumber: this.state.qNumber + 1, draft: '', evidence: [] });
+    } else {
+      this.setState({ history, qStack, seedIndex: nextSeed, draft: '', evidence: [] });
+      this.askNext(history);
+    }
+  }
+  retry = () => { this.setState({ error: false }); this.askNext(this.state.history); };
+  async askNext(history) {
+    this.setState({ busy: true, error: false });
+    const SYS = "You are Consumer Rights AI running a SHORT, adaptive intake for a consumer or legal dispute. You are informational only, not a lawyer. You will receive the answers gathered so far. Ask the NEXT single most useful question that is SPECIFIC to THIS person's exact situation — never generic filler, and never ask something already answered or that does not matter for their case. Good questions are concrete (e.g. for a withheld deposit: whether the landlord ever sent an itemized list of deductions; for a denied insurance claim: the exact stated reason for denial). Ask only 2-4 tailored follow-ups total, then finish. When you have enough to give solid guidance, finish. Respond with ONLY one JSON object, no markdown. To ask: {\"done\":false,\"question\":{\"key\":\"snake_case_key\",\"kind\":\"choice|multichoice|text|textarea|amount\",\"q\":\"the question in plain English\",\"help\":\"one short helper line\",\"options\":[\"only for choice/multichoice\"],\"placeholder\":\"only for text/textarea/amount\"}}. To finish: {\"done\":true,\"result\":{\"title\":\"short case title\",\"summary\":\"2-3 sentence plain-English summary\",\"rights\":[{\"title\":\"plain-language right\",\"law\":\"best-known law or regulation name\"}],\"options\":[{\"name\":\"...\",\"why\":\"one line\",\"effort\":\"Low|Medium|High\",\"time\":\"...\"}],\"nextStep\":\"the single best recommended next action\",\"evidence\":[\"helpful evidence still to gather\"]}}. Use kind 'choice' (2-5 options) when the answer is a natural pick, 'multichoice' for select-all, 'amount' for money, 'text' for short answers, 'textarea' for longer ones. Base rights and laws on any jurisdiction mentioned; if location is unknown and it matters, ask for it once, otherwise give general guidance and note specifics vary by location. Provide 3-5 rights, 3-4 options, 3-5 evidence items. Be encouraging.";
+    const payload = { answersSoFar: history.map(h => ({ question: h.q, answer: h.answer })) };
+    const call = async () => {
+      const raw = await window.claude.complete({ model:'claude-sonnet-4-5', max_tokens:2200, system: SYS, messages: [{ role:'user', content: JSON.stringify(payload) }] });
+      const data = this.parse(raw);
+      if (!data || (!data.done && !data.question) || (data.done && !(data.result && data.result.title))) throw new Error('bad shape');
+      return data;
+    };
+    let data = null;
+    for (let attempt = 0; attempt < 2 && !data; attempt++) {
+      try { data = await call(); }
+      catch (e) { if (attempt === 1) { this.setState({ busy:false, error:true }); return; } }
+    }
+    if (data.done) { this.setState({ phase:'result', result: data.result, busy:false, error:false }); return; }
+    const rq = data.question || {};
+    const q = { key: rq.key || ('q' + history.length), kind: rq.kind || 'text', q: rq.q || 'Is there anything else that might help your case?', help: rq.help || '', options: Array.isArray(rq.options) ? rq.options : [], placeholder: rq.placeholder || '' };
+    this.setState({ q, qNumber: this.state.qNumber + 1, busy:false, error:false, draft:'', evidence:[] });
+  }
+
+  parse(raw) {
+    try {
+      let s = String(raw).trim().replace(/^```(json)?/i,'').replace(/```$/,'').trim();
+      const a = s.indexOf('{'), b = s.lastIndexOf('}');
+      if (a >= 0 && b > a) s = s.slice(a, b + 1);
+      return JSON.parse(s);
+    } catch (e) { return { phase:'ask', reply: String(raw).slice(0, 500), chips: [] }; }
+  }
+
+  renderVals() {
+    const tab = this.state.tab;
+    const defs = [
+      ['overview','Overview'],['timeline','Timeline'],['rights','Rights'],
+      ['options','Options'],['plan','Action plan'],['evidence','Evidence'],
+      ['similar','Similar'],['docs','Documents'],
+    ];
+    const tabs = defs.map(([key,label]) => ({ key, label, active: tab===key, inactive: tab!==key, onClick: this.go(key) }));
+    const timeline = [
+      { date:'Apr 15', title:'Gave 30-day notice', note:'Written notice delivered by email and mail.' },
+      { date:'May 31', title:'Moved out & documented', note:'Unit cleaned professionally; 12 photos of every room taken.' },
+      { date:'Jun 1', title:'Returned keys', note:'Keys handed back; forwarding address provided in writing.' },
+      { date:'Jun 22', title:'21-day deadline passed', note:'No deposit and no itemized statement received.', flag:true },
+      { date:'Jul 2', title:'Followed up by email', note:'Requested return and itemization. No response.' },
+      { date:'Jul 10', title:'Second follow-up', note:'Final informal request before escalating. No response.' },
+    ].map(e => ({ ...e, flag: !!e.flag, normal: !e.flag }));
+    const st = this.state;
+    const step = st.q || this.SEEDS()[0];
+    const result = st.result;
+    const choiceOptions = step.kind === 'choice' ? (step.options || []).map(o => ({ label:o, onClick:this.pickChoice(o) })) : [];
+    const multiOptions = step.kind === 'multichoice' ? (step.options || []).map(o => ({ label:o, onClick:this.toggleEvidence(o), selected: st.evidence.includes(o), unselected: !st.evidence.includes(o) })) : [];
+    const canContinue = step.kind === 'amount' ? true : (step.kind === 'multichoice' ? st.evidence.length > 0 : (st.draft || '').trim().length > 0);
+    const showForm = st.phase === 'form' && !st.busy && !st.error;
+    return {
+      phaseForm: showForm,
+      phaseError: st.phase === 'form' && st.error && !st.busy,
+      retry: this.retry,
+      phaseAnalyzing: st.phase === 'form' && st.busy,
+      analyzingTitle: st.seedIndex >= this.SEEDS().length && st.qNumber <= this.SEEDS().length + 1 ? 'Reading your situation…' : 'One moment…',
+      phaseResult: st.phase === 'result',
+      stepChoice: step.kind === 'choice',
+      stepMulti: step.kind === 'multichoice',
+      stepText: step.kind === 'text',
+      stepArea: step.kind === 'textarea',
+      stepAmount: step.kind === 'amount',
+      question: step.q || '', help: step.help || '', placeholder: step.placeholder || '',
+      qNumber: st.qNumber,
+      progressPct: Math.min(88, 14 + (st.qNumber - 1) * 20) + '%',
+      choiceOptions, multiOptions,
+      draft: st.draft, setDraft: this.setDraft, next: this.next, back: this.back, restart: this.restart,
+      canContinue, cannotContinue: !canContinue, showContinue: step.kind !== 'choice',
+      canBack: st.qStack.length > 0, footerVisible: (step.kind !== 'choice') || (st.qStack.length > 0),
+      hasResult: !!result, result: result || {},
+      resultRights: result ? (result.rights || []) : [],
+      resultOptions: result ? (result.options || []) : [],
+      resultEvidence: result ? (result.evidence || []) : [],
+      tabs,
+      isOverview: tab==='overview', isTimeline: tab==='timeline', isRights: tab==='rights',
+      isOptions: tab==='options', isPlan: tab==='plan', isEvidence: tab==='evidence',
+      isSimilar: tab==='similar', isDocs: tab==='docs',
+      goDocs: this.go('docs'), goRights: this.go('rights'), goOptions: this.go('options'),
+      goEvidence: this.go('evidence'), goSimilar: this.go('similar'),
+      timeline,
+      rights: [
+        { title:'Your deposit must be returned within 21 days', law:'CA Civil Code § 1950.5(g)', body:'After you move out, a landlord has 21 calendar days to return your deposit or send an itemized statement of any deductions.' },
+        { title:'You are owed an itemized statement', law:'§ 1950.5(g)(1)', body:'Deductions must be listed in writing, with receipts or estimates for any repair over $125.' },
+        { title:'Bad-faith retention can double your recovery', law:'§ 1950.5(l)', body:'If a court finds the deposit was kept in bad faith, you may be awarded up to twice the deposit on top of the deposit itself.' },
+        { title:'Normal wear and tear is not chargeable', law:'§ 1950.5(e)', body:'Landlords cannot deduct for ordinary use — faded paint, minor scuffs, or carpet worn from normal living.' },
+        { title:'You have up to 4 years to act', law:'Written-contract limit', body:'For a written lease, the deadline to file a claim is generally four years from the breach.' },
+      ],
+      options: [
+        { name:'Send a demand letter', recommended:true, effort:'Low', time:'1–2 weeks', cost:'Free', desc:'A firm, professional letter citing the 21-day rule and requesting return plus potential penalties.', pros:['Fast and free','Often resolves without court','Creates a paper trail'], cons:['Not legally binding','Landlord can ignore it'] },
+        { name:'File in small claims court', recommended:false, effort:'Medium', time:'1–3 months', cost:'~$75 filing', desc:'California small claims covers up to $12,500 — no lawyer required.', pros:['Can recover the 2× penalty','Binding judgment','Low filing cost'], cons:['Requires a hearing','Slow to schedule'] },
+        { name:'Request mediation', recommended:false, effort:'Low', time:'2–4 weeks', cost:'Often free', desc:'A neutral third party helps both sides reach a voluntary agreement.', pros:['Preserves the relationship','Faster than court'], cons:['Landlord must agree','Not binding unless signed'] },
+        { name:'File a complaint with housing authority', recommended:false, effort:'Low', time:'Varies', cost:'Free', desc:'Report the withholding to your local housing or consumer protection agency.', pros:['Adds official pressure','Creates a public record'], cons:['Can be slow','May not recover funds directly'] },
+      ],
+      plan: [
+        { n:'1', title:'Gather your evidence', desc:'Lease, move-out photos, deposit record, and email thread.', status:'done' },
+        { n:'2', title:'Send the demand letter', desc:'Review the generated letter and send it by certified mail.', status:'current' },
+        { n:'3', title:'Wait 14 days for a response', desc:'Track the response window and save any reply you receive.', status:'upcoming' },
+        { n:'4', title:'File in small claims if unresolved', desc:'Complete Form SC-100 for your county.', status:'upcoming' },
+        { n:'5', title:'Prepare for the hearing', desc:'Organize evidence and a one-page timeline.', status:'upcoming' },
+      ].map(s => ({ ...s, done: s.status==='done', current: s.status==='current', upcoming: s.status==='upcoming' })),
+      evHave: [
+        { name:'Signed lease agreement', meta:'PDF · 8 pages' },
+        { name:'Move-out photos', meta:'12 images · May 31' },
+        { name:'Deposit payment record', meta:'Bank statement · $2,400' },
+        { name:'Email thread with landlord', meta:'4 messages' },
+      ],
+      evMissing: [
+        { name:'Move-in inspection report', why:'Proves the unit\u2019s original condition and counters any damage claim.' },
+        { name:'Certified mail receipt', why:'You\u2019ll have this once the demand letter is sent — it proves delivery.' },
+        { name:'Professional cleaning receipt', why:'Shows the unit was returned clean, undercutting cleaning deductions.' },
+      ],
+      similar: [
+        { title:'Deposit withheld with no itemization', amount:'$4,700', outcome:'Court found bad faith and awarded twice the deposit plus the original amount.', time:'Small claims · 8 weeks' },
+        { title:'Partial deposit kept for \u201ccleaning\u201d', amount:'$1,950', outcome:'Settled for the full amount after a demand letter citing the 21-day rule.', time:'Demand letter · 2 weeks' },
+        { title:'No response after move-out', amount:'$2,200', outcome:'Full deposit returned within days of receiving a certified demand letter.', time:'Demand letter · 10 days' },
+      ],
+      docs: [
+        { name:'Demand letter', status:'Ready to send', desc:'Cites § 1950.5 and requests $2,400 plus penalties within 14 days.' },
+        { name:'Evidence summary', status:'Ready', desc:'A one-page index of your documents and timeline.' },
+        { name:'Small claims prep sheet', status:'Draft', desc:'Form SC-100 guidance and a hearing checklist.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

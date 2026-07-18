@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Consumer Rights AI",
+    "slug": "consumer-rights-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "consumerrightsai",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#f4f1ea",
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#274736"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#f4f1ea"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

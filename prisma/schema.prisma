@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  sessions Session[]
+  cases    Case[]
+}
+
+model Session {
+  token     String   @id @default(cuid())
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// A single dispute case, created once the guided intake finishes.
+// `rights`, `options`, `evidenceNeeded`, `evidenceHave`, `timeline`, `actionPlan`
+// and `demandLetter` are the AI's structured plan output, stored as JSON since
+// their shape is defined by the AI contract (see src/lib/ai.ts) rather than by
+// relational structure — there is no independent querying need for their fields.
+model Case {
+  id              String   @id @default(cuid())
+  userId          String
+  title           String
+  category        String
+  summary         String
+  whatHappened    String
+  otherParty      String?
+  jurisdiction    String?
+  status          String   @default("open")
+  confidenceLabel String
+  confidenceScore Int
+  recoveryLow     Int?
+  recoveryHigh    Int?
+  recoverySummary String?
+  nextStep        String
+  nextStepDetail  String?
+  rights          Json
+  options         Json
+  evidenceHave    Json
+  evidenceNeeded  Json
+  timeline        Json
+  actionPlan      Json
+  demandLetter    Json?
+  intakeHistory   Json
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
