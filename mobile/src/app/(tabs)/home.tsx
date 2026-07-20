@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { View, Text, StyleSheet, FlatList, Pressable, RefreshControl, ActivityIndicator } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { api, ApiError } from "@/lib/api";
 import type { CaseSummary } from "@/lib/types";
 import MicroLabel from "@/components/ui/MicroLabel";
@@ -31,9 +31,14 @@ export default function HomeScreen() {
     }
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  // Refetch every time this tab regains focus (not just on first mount) so a
+  // case created via the intake flow — pushed on top of this screen, then
+  // popped back to it — shows up without the user having to pull-to-refresh.
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load])
+  );
 
   async function onRefresh() {
     setRefreshing(true);

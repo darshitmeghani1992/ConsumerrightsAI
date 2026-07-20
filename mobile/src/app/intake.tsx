@@ -7,6 +7,8 @@ import {
   Pressable,
   ScrollView,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { api, ApiError } from "@/lib/api";
@@ -226,7 +228,7 @@ export default function IntakeScreen() {
   }
 
   return (
-    <View style={styles.page}>
+    <KeyboardAvoidingView style={styles.page} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <View style={styles.headerRow}>
         <View style={styles.iconTile}>
           <View style={styles.iconDot} />
@@ -343,7 +345,7 @@ export default function IntakeScreen() {
           )}
         </>
       )}
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

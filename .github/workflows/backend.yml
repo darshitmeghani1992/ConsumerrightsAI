@@ -1,0 +1,29 @@
+name: Backend
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "mobile/**"
+  pull_request:
+    paths-ignore:
+      - "mobile/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # Build-time only — src/lib/db.ts connects lazily on first real query, so
+      # route analysis and static generation never touch this value. A real
+      # DATABASE_URL is only needed at runtime (set it in your deploy target).
+      DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit -p tsconfig.json
+      - run: npx eslint .
+      - run: npx next build
