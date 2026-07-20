@@ -1,6 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-const MODEL = "claude-sonnet-4-5";
+// Haiku 4.5 is Anthropic's fastest model — chosen deliberately here because this
+// runs on a phone where responsiveness matters, and the intake is a structured
+// question/plan-generation task that doesn't need a heavier model. Swap to
+// "claude-sonnet-5" or "claude-opus-4-8" if you want higher-quality plans and
+// can accept slower, costlier responses.
+const MODEL = "claude-haiku-4-5";
 const MAX_TOKENS = 3000;
 
 export type QuestionKind = "choice" | "multichoice" | "text" | "textarea" | "amount";

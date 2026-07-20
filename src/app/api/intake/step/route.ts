@@ -4,6 +4,11 @@ import { runIntakeStep, type HistoryEntry } from "@/lib/ai";
 import { db } from "@/lib/db";
 import { Prisma } from "@/generated/prisma/client";
 
+// The AI intake call can take longer than Vercel's short default function
+// window; allow up to 60s so the model has room to finish instead of being
+// killed mid-response.
+export const maxDuration = 60;
+
 function toCaseTitle(otherPartyGuess: string | null, title: string) {
   return otherPartyGuess ? `${title} · ${otherPartyGuess}` : title;
 }
@@ -21,7 +26,10 @@ export async function POST(req: Request) {
   let step;
   try {
     step = await runIntakeStep(history);
-  } catch {
+  } catch (e) {
+    // Surface the real reason in the Vercel logs instead of swallowing it —
+    // this is what lets us tell a missing API key from a bad response shape.
+    console.error("intake/step failed:", e);
     return NextResponse.json({ error: "Couldn't reach the analysis just now." }, { status: 502 });
   }
 
