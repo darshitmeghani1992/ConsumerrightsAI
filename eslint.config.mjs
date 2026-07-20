@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // mobile/ is a separate Expo project with its own dependencies and lint
+    // setup — it must never be picked up by the root Next.js build/lint.
+    "mobile/**",
+    // Reference-only design prototype files, not part of the shipped app.
+    "design_handoff_consumer_rights_copilot/**",
   ]),
 ]);
 
