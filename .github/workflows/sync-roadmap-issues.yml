@@ -1,0 +1,44 @@
+name: Sync Roadmap Issues
+
+# Purely mechanical bookkeeping — turns unstarted/in-progress ROADMAP.md
+# tickets into GitHub issues so each one is trackable and @claude-assignable.
+# Never creates a PR, never touches code — just issue bookkeeping.
+on:
+  push:
+    branches: [main]
+    paths: ["ROADMAP.md"]
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse ROADMAP.md and sync issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Matches lines like: - [ ] **0.2 Citation verification layer** — text...
+          # Skips [x] (done) and lines whose ticket id already has an open issue
+          # (matched by "[roadmap:<id>]" in the issue body, set below).
+          grep -oP '^- \[[ ~]\] \*\*\K[0-9]+\.[0-9]+ [^*]+(?=\*\*)' ROADMAP.md | while read -r ticket; do
+            id=$(echo "$ticket" | grep -oP '^[0-9]+\.[0-9]+')
+            title=$(echo "$ticket" | sed -E 's/^[0-9]+\.[0-9]+ //')
+
+            existing=$(gh issue list --search "[roadmap:$id] in:body" --json number --jq '.[0].number' || true)
+            if [ -z "$existing" ]; then
+              gh issue create \
+                --title "[$id] $title" \
+                --body "Tracking issue for ROADMAP.md ticket $id.
+
+Comment \`@claude implement ticket $id, following CLAUDE.md and ROADMAP.md\` to have Claude Code pick this up and open a PR.
+
+[roadmap:$id]" \
+                --label "roadmap"
+            fi
+          done

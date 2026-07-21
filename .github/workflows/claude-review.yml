@@ -1,0 +1,45 @@
+name: Claude PR Review
+
+# Runs automatically on every PR, no @claude mention needed. This is the
+# "safe to automate" half of the split described in CLAUDE.md — it reviews
+# and comments, it never merges.
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Claude Code Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Review this PR against the conventions in CLAUDE.md and the ticket
+            it's implementing from ROADMAP.md.
+
+            Flag explicitly, as a top-priority comment, if this PR touches any
+            of the guardrail areas listed in CLAUDE.md (citation logic,
+            out-of-scope guard, confidence/recovery-estimate logic, demand
+            letter wording, data retention/deletion). If it does, say so
+            clearly at the top of the review even if the change itself looks
+            correct — a human must review those regardless of code quality.
+
+            Otherwise, review for: correctness, test coverage on
+            dates/deadlines/citation-display/deletion code paths (per
+            CLAUDE.md), consistency with existing patterns, and anything that
+            looks like it silently widens product scope (e.g. loosening the
+            out-of-scope guard, moving toward open-ended Q&A instead of the
+            guided intake format) — that was explicitly decided against and
+            should never be reintroduced without an explicit human decision.
+          post_as_review: true
